@@ -1,6 +1,6 @@
 ﻿# Stylish To-Do App ✅
 
-A responsive and colorful **To-Do application** built with **HTML, CSS, and JavaScript (Vanilla JS)**.  
+A responsive **To-Do application** built with **HTML, CSS, and JavaScript (Vanilla JS)**.  
 This project demonstrates front-end skills such as DOM manipulation, event handling, and localStorage usage for persistence.
 
 ---
@@ -34,4 +34,5 @@ This project demonstrates front-end skills such as DOM manipulation, event handl
 1. Clone the repository:
    ```bash
    git clone https://github.com/GuntashKaur/todo-app-guntash.git
+
 
