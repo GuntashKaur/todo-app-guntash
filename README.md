@@ -5,6 +5,11 @@ This project demonstrates front-end skills such as DOM manipulation, event handl
 
 ---
 
+## 🖥️ Demo
+🔗 **Live Demo:** [https://github.com/GuntashKaur/todo-app-guntash.git](https://GuntashKaur.github.io/todo-app-guntash/)  
+
+---
+
 ## ✨ Features
 - ➕ **Add tasks** easily  
 - ✏️ **Edit tasks** (double-click to rename)  
@@ -16,10 +21,7 @@ This project demonstrates front-end skills such as DOM manipulation, event handl
 
 ---
 
-## 🖥️ Demo
-🔗 **Live Demo:** [https://github.com/GuntashKaur/todo-app-guntash.git](https://GuntashKaur.github.io/todo-app-guntash/)  
 
----
 
 ## 🛠️ Tech Stack
 - HTML5  
@@ -32,3 +34,4 @@ This project demonstrates front-end skills such as DOM manipulation, event handl
 1. Clone the repository:
    ```bash
    git clone https://github.com/GuntashKaur/todo-app-guntash.git
+
