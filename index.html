@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Guntash • Stylish To-Do</title>
+
+  <!-- Google Font (optional, will fallback to system fonts if blocked) -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+  /* ---------- Reset & base ---------- */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:"Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.16), transparent 6%),
+                linear-gradient(180deg, #e6f3ff 0%, #ffffff 100%);
+    color:#0b1220;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px;
+  }
+
+  /* ---------- Centered container ---------- */
+  .container {
+    width:100%;
+    max-width:920px;
+    display:grid;
+    grid-template-columns: 1fr 320px;
+    gap:24px;
+    align-items:start;
+  }
+
+  /* ---------- Card (main) ---------- */
+  .card {
+    background: linear-gradient(180deg, #ffffff, #fcfdff);
+    border-radius:16px;
+    padding:22px;
+    box-shadow: 0 16px 40px rgba(8,18,46,0.08);
+    border:1px solid rgba(11,17,28,0.04);
+  }
+
+  .header {
+    display:flex;
+    gap:12px;
+    align-items:center;
+    margin-bottom:14px;
+  }
+  .logo {
+    width:60px;height:60px;border-radius:12px;
+    display:grid;place-items:center;
+    background: linear-gradient(135deg,#06b6d4,#7c3aed);
+    color:white;font-weight:700;font-size:20px;
+    box-shadow: 0 8px 24px rgba(124,58,237,0.14);
+  }
+  .title { margin:0; font-size:1.4rem; font-weight:600; }
+  .subtitle { margin:0; color:#64748b; font-size:0.92rem; }
+
+  /* ---------- Input row ---------- */
+  .task-row { display:flex; gap:10px; margin-bottom:16px; }
+  .task-input {
+    flex:1;
+    padding:12px 14px;
+    border-radius:12px;
+    border:1px solid #e6eef8;
+    background:linear-gradient(180deg,#fff,#fbfdff);
+    font-size:1rem;
+    transition: box-shadow .12s, transform .08s;
+  }
+  .task-input:focus { outline:none; box-shadow:0 10px 30px rgba(6,182,212,0.12); transform:translateY(-2px); }
+
+  .btn {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 14px; border-radius:12px; border:0; cursor:pointer;
+    font-weight:600; font-size:0.95rem;
+  }
+  .btn-add { background: linear-gradient(90deg,#06b6d4,#7c3aed); color:white; box-shadow:0 8px 20px rgba(7,89,133,0.10); }
+  .btn-ghost { background:transparent; border:1px solid rgba(11,17,28,0.05); color:#334155; }
+
+  /* ---------- Tasks list ---------- */
+  .tasks { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:12px; min-height:120px; }
+  .task {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px; border-radius:12px; background:linear-gradient(180deg,#f8fbff,#ffffff);
+    border:1px solid rgba(11,17,28,0.03); transition: transform .12s, box-shadow .12s;
+  }
+  .task:hover { transform:translateY(-6px); box-shadow:0 14px 30px rgba(2,6,23,0.06); }
+  .task-left { display:flex; align-items:center; gap:12px; flex:1; }
+  .task input[type="checkbox"] { width:18px; height:18px; border-radius:4px; cursor:pointer; accent-color:#7c3aed; }
+  .task .title { font-size:1rem; color:#0b1220; }
+  .task.completed .title { text-decoration:line-through; color:#94a3b8; }
+
+  .actions { display:flex; gap:10px; align-items:center; }
+  .icon { width:36px; height:36px; display:grid; place-items:center; border-radius:8px; cursor:pointer; color:#475569; }
+  .icon:hover { background:rgba(11,17,28,0.04); color:#0b1220; }
+
+  /* ---------- Footer ---------- */
+  .footer { display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:12px; border-top:1px dashed rgba(11,17,28,0.04); }
+  .count { color:#64748b; font-weight:600; }
+
+  /* ---------- Promo column ---------- */
+  .promo {
+    background: linear-gradient(180deg,#ffffff,#fbfdff);
+    border-radius:12px; padding:18px; box-shadow:0 14px 30px rgba(2,6,23,0.06);
+    border:1px solid rgba(11,17,28,0.03);
+  }
+  .promo h3 { margin:0 0 8px; font-size:1.05rem; }
+  .promo p { margin:0; color:#64748b; font-size:0.95rem; }
+
+  /* ---------- Empty state ---------- */
+  .empty { text-align:center; color:#64748b; padding:18px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:960px) {
+    .container { grid-template-columns: 1fr; padding:0 14px; }
+  }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Main card -->
+    <div class="card" role="application" aria-label="To-do list application">
+      <div class="header">
+        <div class="logo">G</div>
+        <div>
+          <h2 class="title">Guntash's To-Do</h2>
+          <div class="subtitle">Focus • Ship • Repeat</div>
+        </div>
+      </div>
+
+      <form id="task-form" class="task-row" autocomplete="off">
+        <input id="task-input" class="task-input" placeholder="Add a task (press Enter or click +)" />
+        <button type="submit" class="btn btn-add" title="Add task">
+          <!-- inline plus svg -->
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5v14M5 12h14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Add
+        </button>
+      </form>
+
+      <ul id="task-list" class="tasks" aria-live="polite">
+        <!-- tasks injected here -->
+      </ul>
+
+      <div class="footer">
+        <div class="count" id="task-count">0 tasks</div>
+        <div class="controls">
+          <button id="clear-completed" class="btn btn-ghost" title="Clear completed">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6v14a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6" stroke="#0b1220" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Clear Completed
+          </button>
+          <button id="clear-all" class="btn btn-ghost" title="Clear all">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6l1 14a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2l1-14" stroke="#0b1220" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Clear All
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Promo column -->
+    <aside class="promo" aria-hidden="true">
+      <h3>Pro Tip</h3>
+      <p>Double-click a task to edit. Press <strong>Enter</strong> or click outside to save. Use this for fast edits.</p>
+      <div style="height:14px"></div>
+      <div style="border-radius:10px;padding:12px;background:linear-gradient(180deg,#f1f9ff,#ffffff);border:1px solid #e6f0fb">
+        <!-- small illustrative list -->
+        <svg width="100%" height="56" viewBox="0 0 200 56" fill="none"><rect x="6" y="6" width="188" height="44" rx="8" fill="#fdfefe" stroke="#e6f4ff"/><rect x="22" y="16" width="110" height="8" rx="4" fill="#eef8ff"/><rect x="22" y="30" width="140" height="6" rx="3" fill="#f4f8fb"/></svg>
+      </div>
+    </aside>
+  </div>
+
+<script>
+/* ---------- app.js inline ---------- */
+const form = document.getElementById('task-form');
+const input = document.getElementById('task-input');
+const list = document.getElementById('task-list');
+const countEl = document.getElementById('task-count');
+const clearCompletedBtn = document.getElementById('clear-completed');
+const clearAllBtn = document.getElementById('clear-all');
+
+let tasks = JSON.parse(localStorage.getItem('guntash_tasks') || '[]');
+
+function save() {
+  localStorage.setItem('guntash_tasks', JSON.stringify(tasks));
+  render();
+}
+
+function addTask(title) {
+  if (!title) return;
+  tasks.unshift({ id: Date.now(), title, completed: false });
+  save();
+}
+
+function toggleTask(id) {
+  tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+  save();
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter(t => t.id !== id);
+  save();
+}
+
+function editTask(id, newTitle) {
+  tasks = tasks.map(t => t.id === id ? { ...t, title: newTitle } : t);
+  save();
+}
+
+function clearCompleted() {
+  tasks = tasks.filter(t => !t.completed);
+  save();
+}
+
+function clearAll() {
+  if (!confirm('Are you sure you want to delete all tasks?')) return;
+  tasks = [];
+  save();
+}
+
+function render() {
+  list.innerHTML = '';
+  if (tasks.length === 0) {
+    const li = document.createElement('li');
+    li.className = 'empty';
+    li.textContent = 'No tasks yet. Add one above 👆';
+    list.appendChild(li);
+  } else {
+    tasks.forEach(t => {
+      const li = document.createElement('li');
+      li.className = 'task' + (t.completed ? ' completed' : '');
+      li.innerHTML = `
+        <div class="task-left">
+          <input type="checkbox" ${t.completed ? 'checked' : ''} data-id="${t.id}">
+          <div class="title" contenteditable="false" data-id="${t.id}">${escapeHtml(t.title)}</div>
+        </div>
+        <div class="actions">
+          <button class="icon" data-action="edit" data-id="${t.id}" title="Edit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 21l3-1 12-12 2 2L8 22 3 21z" stroke="#111827" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon" data-action="delete" data-id="${t.id}" title="Delete">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6v14a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6" stroke="#111827" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      `;
+      list.appendChild(li);
+    });
+  }
+  countEl.textContent = `${tasks.length} task${tasks.length !== 1 ? 's' : ''}`;
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* Events */
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const v = input.value.trim();
+  if (!v) return;
+  addTask(v);
+  input.value = '';
+});
+
+list.addEventListener('click', e => {
+  const actionBtn = e.target.closest('button[data-action]');
+  if (e.target.matches('input[type="checkbox"]')) {
+    const id = +e.target.dataset.id;
+    toggleTask(id);
+    return;
+  }
+  if (actionBtn) {
+    const id = +actionBtn.dataset.id;
+    const action = actionBtn.dataset.action;
+    if (action === 'edit') {
+      enableEditing(list.querySelector(`.title[data-id="${id}"]`));
+    } else if (action === 'delete') {
+      deleteTask(id);
+    }
+  }
+});
+
+list.addEventListener('dblclick', e => {
+  const td = e.target.closest('.title');
+  if (td) enableEditing(td);
+});
+
+function enableEditing(el) {
+  if (!el) return;
+  el.contentEditable = 'true';
+  el.classList.add('editing');
+  // move caret to end:
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  range.collapse(false);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  el.focus();
+}
+
+/* Save on blur or Enter */
+list.addEventListener('focusout', e => {
+  const t = e.target;
+  if (t && t.classList && t.classList.contains('title')) {
+    const id = +t.dataset.id;
+    const newTitle = t.textContent.trim();
+    t.contentEditable = 'false';
+    t.classList.remove('editing');
+    if (!newTitle) deleteTask(id);
+    else editTask(id, newTitle);
+  }
+});
+list.addEventListener('keydown', e => {
+  if (e.target.classList && e.target.classList.contains('title') && e.key === 'Enter') {
+    e.preventDefault();
+    e.target.blur();
+  }
+});
+
+clearCompletedBtn.addEventListener('click', clearCompleted);
+clearAllBtn.addEventListener('click', clearAll);
+
+/* initial render */
+render();
+</script>
+</body>
+</html>
